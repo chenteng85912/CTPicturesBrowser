@@ -95,29 +95,29 @@ static CTImagePreviewViewController *imageShowInstance = nil;
 }
 
 #pragma mark 展示图片
-- (void)showPictureWithUrlOrImages:(NSArray *)urlArray withCurrentPageNum:(NSInteger)currentNum andRootViewController:(UIViewController *)rootVC{
-    [self showPicture:urlArray withCurrentPageNum:currentNum andRootViewController:rootVC];
+- (void)showPictureWithUrlOrImages:(NSArray *)imageArray withCurrentPageNum:(NSInteger)currentNum andRootViewController:(UIViewController *)rootVC{
+    [self showPicture:imageArray withCurrentPageNum:currentNum andRootViewController:rootVC];
 }
 
-- (void)showPicture:(NSArray *)urlArray withCurrentPageNum:(NSInteger)currentNum andRootViewController:(UIViewController *)rootVC{
-    if (urlArray.count == 0||!rootVC) {
+- (void)showPicture:(NSArray *)imageArray withCurrentPageNum:(NSInteger)currentNum andRootViewController:(UIViewController *)rootVC{
+    if (imageArray.count == 0||!rootVC) {
         return;
     }
-    if (urlArray.count<currentNum+1) {
-        currentNum = urlArray.count-1;
+    if (imageArray.count<currentNum+1) {
+        currentNum = imageArray.count-1;
     }
     
-    if (urlArray.count==1) {
+    if (imageArray.count==1) {
         self.pageNumLabel.hidden = YES;
     }else{
         self.pageNumLabel.hidden = NO;
         
     }
-    self.dataArray = urlArray;
+    self.dataArray = imageArray;
     [self.colView reloadData];
     
     [self.colView setContentOffset:CGPointMake((Device_width+20)*currentNum, 0)];
-    self.pageNumLabel.text = [NSString stringWithFormat:@"%ld/%lu",currentNum+1,(unsigned long)urlArray.count];
+    self.pageNumLabel.text = [NSString stringWithFormat:@"%ld/%lu",currentNum+1,(unsigned long)imageArray.count];
     
     self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     [rootVC presentViewController:imageShowInstance animated:YES completion:^{

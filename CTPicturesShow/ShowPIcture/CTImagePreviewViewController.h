@@ -22,7 +22,7 @@
  *2、当前图片位置currentNum
  *3、根视图控制器rootVC
  */
-- (void)showPictureWithUrlOrImages:(NSArray *)urlArray withCurrentPageNum:(NSInteger)currentNum andRootViewController:(UIViewController *)rootVC;
+- (void)showPictureWithUrlOrImages:(NSArray *)imageArray withCurrentPageNum:(NSInteger)currentNum andRootViewController:(UIViewController *)rootVC;
 ;
 
 @end
