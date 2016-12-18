@@ -155,7 +155,8 @@
     
     self.progressLabel.hidden = YES;
     [self.vwIndView stopAnimating];
-    if (state) {
+    
+    if (state) {//下载成功
         //清空下载对象
         [[CTImagePreviewViewController defaultShowPicture].requestArray enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             if ([[(CTDownloadTool *)obj URL].absoluteString isEqualToString:_request.URL.absoluteString]) {
@@ -179,6 +180,7 @@
         }
         
     }else{
+        //下载失败
         if (!self.warinigView) {
             self.warinigView = [self addWarningLabel];
             if (self.superview&&[self.superview isKindOfClass:[UIScrollView class]]) {
