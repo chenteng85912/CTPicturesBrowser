@@ -1,9 +1,7 @@
 //
 //  ImagePreviewViewController.h
-//  TYKYTwoLearnOneDo
 //
-//  Created by Apple on 16/7/22.
-//  Copyright © 2016年 深圳太极云软技术股份有限公司. All rights reserved.
+//  Created by teng on 16/7/22.
 //
 
 #import <UIKit/UIKit.h>
