@@ -7,6 +7,7 @@
 //
 
 #import "CTLazyImageView.h"
+#import "CTImagePreviewViewController.h"
 #import "CTDownloadTool.h"
 
 #define Device_height   [[UIScreen mainScreen] bounds].size.height
@@ -38,9 +39,11 @@
     if([[NSFileManager defaultManager] fileExistsAtPath:filePath ])
     {
         UIImage *savedImage = [UIImage imageWithContentsOfFile:filePath ];
-            
-        self.image = savedImage;
-        self.frame = [self makeImageViewFrame:savedImage];
+        if (savedImage) {
+            self.image = savedImage;
+            self.frame = [self makeImageViewFrame:savedImage];
+        }
+       
         return;
     }
     
@@ -153,6 +156,13 @@
     self.progressLabel.hidden = YES;
     [self.vwIndView stopAnimating];
     if (state) {
+        //清空下载对象
+        [[CTImagePreviewViewController defaultShowPicture].requestArray enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([[(CTDownloadTool *)obj URL].absoluteString isEqualToString:_request.URL.absoluteString]) {
+                [[CTImagePreviewViewController defaultShowPicture].requestArray removeObject:obj];
+                *stop = YES;
+            }
+        }];
         self.transform = CGAffineTransformMakeScale(0.01,0.01);
         [UIView animateWithDuration:0.25 animations:^{
             [UIView setAnimationBeginsFromCurrentState:YES];

@@ -20,8 +20,9 @@
     // Do any additional setup after loading the view, typically from a nib.
 }
 - (IBAction)showPicAction:(id)sender {
-//    [CTImagePreviewViewController defaultShowPicture] showPictureWithImages:<#(NSArray *)#> withCurrentPageNum:<#(NSInteger)#> andRootViewController:<#(UIViewController *)#>
-//    [CTImagePreviewViewController defaultShowPicture] showPictureWithURL:<#(NSArray *)#> withCurrentPageNum:<#(NSInteger)#> andRootViewController:<#(UIViewController *)#>
+    
+//    [CTImagePreviewViewController defaultShowPicture] showPictureWithUrlOrImages:<#(NSArray *)#> withCurrentPageNum:<#(NSInteger)#> andRootViewController:<#(UIViewController *)#>
+    
 }
 
 

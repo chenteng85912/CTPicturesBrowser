@@ -8,23 +8,21 @@
 
 #import <UIKit/UIKit.h>
 
+@class CTDownloadTool;
+
 @interface CTImagePreviewViewController : UIViewController
+
 + (instancetype)defaultShowPicture;
 
-/**
- *展示本地图片，传入参数
- *1、图片数组 
- *2、当前图片位置currentNum 
- *3、根视图控制器rootVC
-*/
-- (void)showPictureWithImages:(NSArray *)imageArray withCurrentPageNum:(NSInteger)currentNum andRootViewController:(UIViewController *)rootVC;
+@property (strong, nonatomic) NSMutableArray <CTDownloadTool *> *requestArray;//下载对象
 
 /**
  *展示网络图片，传入参数
- *1、图片地址数组
+ *1、图片(下载地址或图片)数组
  *2、当前图片位置currentNum
  *3、根视图控制器rootVC
  */
-- (void)showPictureWithURL:(NSArray *)urlArray withCurrentPageNum:(NSInteger)currentNum andRootViewController:(UIViewController *)rootVC;
+- (void)showPictureWithUrlOrImages:(NSArray *)urlArray withCurrentPageNum:(NSInteger)currentNum andRootViewController:(UIViewController *)rootVC;
+;
 
 @end

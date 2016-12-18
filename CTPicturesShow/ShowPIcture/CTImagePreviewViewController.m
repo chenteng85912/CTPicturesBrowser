@@ -13,15 +13,15 @@
 #define Device_height   [[UIScreen mainScreen] bounds].size.height
 #define Device_width    [[UIScreen mainScreen] bounds].size.width
 
+#define CTImageShowIdentifier @"CTImageShowIdentifier"
+
 static CTImagePreviewViewController *imageShowInstance = nil;
 
 @interface CTImagePreviewViewController ()<UIScrollViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate>
 
 @property (strong, nonatomic) UICollectionView *colView;
 @property (strong, nonatomic) NSArray *dataArray;//图片或者网址数据
-@property (strong, nonatomic) NSMutableArray *requestArray;//下载对象
 @property (strong, nonatomic) UILabel *pageNumLabel;//页码显示
-@property (assign, nonatomic) BOOL isLoadFromNet;//是否加载网络视图
 
 @end
 
@@ -67,10 +67,9 @@ static CTImagePreviewViewController *imageShowInstance = nil;
     [self.view addSubview:colView];
     colView.backgroundColor= [UIColor blackColor];
     colView.directionalLockEnabled  = YES;
-    [colView registerNib:[UINib nibWithNibName:@"AlbumCollectionViewCell" bundle:nil] forCellWithReuseIdentifier:@"AlbumCollectionViewCell"];
     imageShowInstance.colView = colView;
     
-    [self.colView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"BigCollectionViewCell"];
+    [self.colView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:CTImageShowIdentifier];
     
     //单击返回
     UITapGestureRecognizer *singleTapGestureRecognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(singleTap:)];
@@ -91,21 +90,16 @@ static CTImagePreviewViewController *imageShowInstance = nil;
     pageLabel.layer.cornerRadius = 5.0;
     [imageShowInstance.view addSubview:pageLabel];
     imageShowInstance.pageNumLabel = pageLabel;
-    
     imageShowInstance.requestArray = [NSMutableArray new];
     
 }
-#pragma mark 展示本地图片
-- (void)showPictureWithImages:(NSArray *)imageArray withCurrentPageNum:(NSInteger)currentNum andRootViewController:(UIViewController *)rootVC{
-    [self showPicture:imageArray withCurrentPageNum:currentNum andRootViewController:rootVC isFromNet:NO];
 
-}
-#pragma mark 展示网络图片
-- (void)showPictureWithURL:(NSArray *)urlArray withCurrentPageNum:(NSInteger)currentNum andRootViewController:(UIViewController *)rootVC{
-    [self showPicture:urlArray withCurrentPageNum:currentNum andRootViewController:rootVC isFromNet:YES];
+#pragma mark 展示图片
+- (void)showPictureWithUrlOrImages:(NSArray *)urlArray withCurrentPageNum:(NSInteger)currentNum andRootViewController:(UIViewController *)rootVC{
+    [self showPicture:urlArray withCurrentPageNum:currentNum andRootViewController:rootVC];
 }
 
-- (void)showPicture:(NSArray *)urlArray withCurrentPageNum:(NSInteger)currentNum andRootViewController:(UIViewController *)rootVC isFromNet:(BOOL)isFromNet{
+- (void)showPicture:(NSArray *)urlArray withCurrentPageNum:(NSInteger)currentNum andRootViewController:(UIViewController *)rootVC{
     if (urlArray.count == 0||!rootVC) {
         return;
     }
@@ -119,7 +113,6 @@ static CTImagePreviewViewController *imageShowInstance = nil;
         self.pageNumLabel.hidden = NO;
         
     }
-    self.isLoadFromNet = isFromNet;
     self.dataArray = urlArray;
     [self.colView reloadData];
     
@@ -128,7 +121,7 @@ static CTImagePreviewViewController *imageShowInstance = nil;
     
     self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     [rootVC presentViewController:imageShowInstance animated:YES completion:^{
-        [UIApplication sharedApplication].statusBarHidden = YES;
+        [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
     }];
 
 }
@@ -144,7 +137,7 @@ static CTImagePreviewViewController *imageShowInstance = nil;
 }
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    UICollectionViewCell *mycell = [collectionView dequeueReusableCellWithReuseIdentifier:@"BigCollectionViewCell" forIndexPath:indexPath];
+    UICollectionViewCell *mycell = [collectionView dequeueReusableCellWithReuseIdentifier:CTImageShowIdentifier forIndexPath:indexPath];
     
     [mycell.contentView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     
@@ -154,23 +147,23 @@ static CTImagePreviewViewController *imageShowInstance = nil;
     scrView.maximumZoomScale = 3.0;
     scrView.minimumZoomScale = 0.9;
     
-    if (!self.isLoadFromNet) {
+    id obj = self.dataArray[indexPath.row];
+    if ([obj isKindOfClass:[UIImage class]]) {
         UIImageView *imgView = [self makeImageView:self.dataArray[indexPath.row]];
         imgView.tag = indexPath.item+1000;
         [scrView addSubview:imgView];
-
     }else{
         CTLazyImageView *imgView = [[CTLazyImageView alloc] initWithFrame:scrView.frame];
         imgView.request  = [self getDownloadToolFromTempArray:self.dataArray[indexPath.item]];
         imgView.tag = indexPath.item+1000;
         [scrView addSubview:imgView];
-
     }
   
     [mycell.contentView addSubview:scrView];
 
     return mycell;
 }
+#pragma mark 生成或获取下载工具
 - (CTDownloadTool *)getDownloadToolFromTempArray:(NSString *)urlStr{
   
     CTDownloadTool *request = nil;
@@ -192,7 +185,7 @@ static CTImagePreviewViewController *imageShowInstance = nil;
     
     if ([scrollView isKindOfClass:[UICollectionView class]]) {
         NSInteger pageNum = (scrollView.contentOffset.x - (Device_width+20) / 2) / (Device_width+20) + 1;
-        self.pageNumLabel.text = [NSString stringWithFormat:@"%d/%lu",pageNum+1,(long)self.dataArray.count];
+        self.pageNumLabel.text = [NSString stringWithFormat:@"%ld/%lu",pageNum+1,(long)self.dataArray.count];
     }
   
 }
@@ -253,11 +246,9 @@ static CTImagePreviewViewController *imageShowInstance = nil;
 #pragma mark 单击图片返回
 -(void)singleTap:(UITapGestureRecognizer *)gestureRecognize {
     
-    [UIApplication sharedApplication].statusBarHidden = NO;
+    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
     
     [self dismissViewControllerAnimated:YES completion:^{
-        //情况所有下载对象
-        [imageShowInstance.requestArray removeAllObjects];
         
     }];
     

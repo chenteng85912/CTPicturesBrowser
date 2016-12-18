@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @class CTDownloadTool;
+
 @interface CTLazyImageView : UIImageView
 
 @property (strong, nonatomic) CTDownloadTool *request;
