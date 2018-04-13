@@ -103,6 +103,7 @@ NSString *const CTImageShowIdentifier = @"CTImageShowIdentifier";
     
     self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     
+    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
     [[self p_currentViewController] presentViewController:self animated:YES completion:nil];
     
 }
@@ -140,7 +141,8 @@ NSString *const CTImageShowIdentifier = @"CTImageShowIdentifier";
 
 #pragma mark CTImageScrollViewDelegate
 - (void)singalTapAction {
-   
+    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
+
     [self dismissViewControllerAnimated:YES completion:^{
     }];
     
