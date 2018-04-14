@@ -21,7 +21,7 @@
 }
 - (IBAction)showPicAction:(id)sender {
     
-//    [CTImagePreviewViewController defaultShowPicture] showPictureWithUrlOrImages:<#(NSArray *)#> withCurrentPageNum:<#(NSInteger)#> andRootViewController:<#(UIViewController *)#>
+//    [CTImagePreviewViewController showPictureWithUrlOrImages:<#(NSArray * _Nonnull)#> withCurrentPageNum:<#(NSInteger)#>] 
     
 }
 

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3E1043452081839900395FD7 /* ct_refresh@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E1043442081839900395FD7 /* ct_refresh@2x.png */; };
+		3E10435D20820BC500395FD7 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 3E10435C20820BC500395FD7 /* README.md */; };
 		3ECE9115207B884A0027CBC2 /* CTImageScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ECE910D207B884A0027CBC2 /* CTImageScrollView.m */; };
 		3ECE9116207B884A0027CBC2 /* CTDownloadWithSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ECE910F207B884A0027CBC2 /* CTDownloadWithSession.m */; };
 		3ECE9117207B884A0027CBC2 /* CTImagePath.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ECE9111207B884A0027CBC2 /* CTImagePath.m */; };
@@ -25,6 +26,7 @@
 
 /* Begin PBXFileReference section */
 		3E1043442081839900395FD7 /* ct_refresh@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ct_refresh@2x.png"; sourceTree = "<group>"; };
+		3E10435C20820BC500395FD7 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3ECE910D207B884A0027CBC2 /* CTImageScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CTImageScrollView.m; sourceTree = "<group>"; };
 		3ECE910E207B884A0027CBC2 /* CTDownloadWithSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CTDownloadWithSession.h; sourceTree = "<group>"; };
 		3ECE910F207B884A0027CBC2 /* CTDownloadWithSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CTDownloadWithSession.m; sourceTree = "<group>"; };
@@ -64,6 +66,7 @@
 		A4A95DD31DD8492000AC3B34 = {
 			isa = PBXGroup;
 			children = (
+				3E10435C20820BC500395FD7 /* README.md */,
 				A4A95DDE1DD8492000AC3B34 /* CTPicturesShow */,
 				A4A95DDD1DD8492000AC3B34 /* Products */,
 			);
@@ -184,6 +187,7 @@
 			files = (
 				A4A95DF21DD8492000AC3B34 /* LaunchScreen.storyboard in Resources */,
 				A4A95DEF1DD8492000AC3B34 /* Assets.xcassets in Resources */,
+				3E10435D20820BC500395FD7 /* README.md in Resources */,
 				A4A95DEA1DD8492000AC3B34 /* Main.storyboard in Resources */,
 				3E1043452081839900395FD7 /* ct_refresh@2x.png in Resources */,
 			);
