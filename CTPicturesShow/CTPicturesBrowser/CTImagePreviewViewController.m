@@ -8,9 +8,8 @@
 
 #import "CTImagePreviewViewController.h"
 #import "CTImageScrollView.h"
+#import "CTImagePath.h"
 
-#define Device_height   [[UIScreen mainScreen] bounds].size.height
-#define Device_width    [[UIScreen mainScreen] bounds].size.width
 
 NSString *const CTImageShowIdentifier = @"CTImageShowIdentifier";
 
@@ -34,7 +33,8 @@ NSString *const CTImageShowIdentifier = @"CTImageShowIdentifier";
         static dispatch_once_t once;
         dispatch_once(&once, ^{
             imageShowInstance = [[self alloc] init];
-            
+            [imageShowInstance initUI];
+
         });
         return imageShowInstance;
     }
@@ -45,9 +45,9 @@ NSString *const CTImageShowIdentifier = @"CTImageShowIdentifier";
     
     UICollectionViewFlowLayout *layout = [UICollectionViewFlowLayout new];
     layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
-    layout.itemSize = CGSizeMake(Device_width+10, Device_height);
+    layout.itemSize = CGSizeMake(kPictureBrowserScreenWidth+10, kPictureBrowserScreenHeight);
     layout.sectionInset = UIEdgeInsetsMake(0, 0, 0, 10);
-    UICollectionView *colView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, 0, Device_width+20, Device_height) collectionViewLayout:layout];
+    UICollectionView *colView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, 0, kPictureBrowserScreenWidth+20, kPictureBrowserScreenHeight) collectionViewLayout:layout];
     colView.pagingEnabled = YES;
     colView.delegate = self;
     colView.dataSource = self;
@@ -58,7 +58,7 @@ NSString *const CTImageShowIdentifier = @"CTImageShowIdentifier";
     
     [self.colView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:CTImageShowIdentifier];
 
-    UILabel *pageLabel = [[UILabel alloc] initWithFrame:CGRectMake(Device_width/2-20, Device_height-60, 40, 26)];
+    UILabel *pageLabel = [[UILabel alloc] initWithFrame:CGRectMake(kPictureBrowserScreenWidth/2-20, kPictureBrowserScreenHeight-60, 40, 26)];
     pageLabel.textAlignment = NSTextAlignmentCenter;
     pageLabel.font = [UIFont systemFontOfSize:13];
     pageLabel.textColor = [UIColor whiteColor];
@@ -77,7 +77,6 @@ NSString *const CTImageShowIdentifier = @"CTImageShowIdentifier";
     if (imageArray.count == 0) {
         return;
     }
-    [[self defaultShowPicture] initUI];
 
     [[self defaultShowPicture] showPicture:imageArray withCurrentPageNum:currentNum];
 }
@@ -98,7 +97,7 @@ NSString *const CTImageShowIdentifier = @"CTImageShowIdentifier";
     self.dataArray = imageArray;
     [self.colView reloadData];
     
-    [self.colView setContentOffset:CGPointMake((Device_width+20)*currentNum, 0)];
+    [self.colView setContentOffset:CGPointMake((kPictureBrowserScreenWidth+20)*currentNum, 0)];
     self.pageNumLabel.text = [NSString stringWithFormat:@"%ld/%lu",currentNum+1,(unsigned long)imageArray.count];
     
     self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
@@ -123,7 +122,7 @@ NSString *const CTImageShowIdentifier = @"CTImageShowIdentifier";
     
     [mycell.contentView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     
-    CTImageScrollView *scrView = [CTImageScrollView initWithFrame:CGRectMake(0, 0, Device_width, Device_height)
+    CTImageScrollView *scrView = [CTImageScrollView initWithFrame:CGRectMake(0, 0, kPictureBrowserScreenWidth, kPictureBrowserScreenHeight)
                                   image:self.dataArray[indexPath.row]];
     scrView.scrolDelegate = self;
     [mycell.contentView addSubview:scrView];
@@ -134,7 +133,7 @@ NSString *const CTImageShowIdentifier = @"CTImageShowIdentifier";
 #pragma mark 正在滑动
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView{
     
-    int pageNum = (scrollView.contentOffset.x - (Device_width+20) / 2) / (Device_width+20) + 1;
+    int pageNum = (scrollView.contentOffset.x - (kPictureBrowserScreenWidth+20) / 2) / (kPictureBrowserScreenWidth+20) + 1;
     self.pageNumLabel.text = [NSString stringWithFormat:@"%d/%lu",pageNum+1,(long)self.dataArray.count];
   
 }
@@ -147,7 +146,17 @@ NSString *const CTImageShowIdentifier = @"CTImageShowIdentifier";
     }];
     
 }
++ (BOOL)clearLocalImages{
+    NSString *imgsLocalPath = CTImagePath.documentPath;
+    
+    if([[NSFileManager defaultManager] fileExistsAtPath:CTImagePath.documentPath ]){
+        NSError *error;
+        return [[NSFileManager defaultManager] removeItemAtPath:imgsLocalPath error:&error];
+      
+    }
 
+    return YES;
+}
 //获取最顶部控制器
 - (UIViewController *)p_currentViewController {
     

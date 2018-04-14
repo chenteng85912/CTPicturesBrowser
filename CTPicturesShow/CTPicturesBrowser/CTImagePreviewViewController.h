@@ -18,8 +18,15 @@
  *2、当前图片位置currentNum
  *3、根视图控制器rootVC
  */
-+ (void)showPictureWithUrlOrImages:(NSArray *)imageOrUrlArray
++ (void)showPictureWithUrlOrImages:(NSArray * __nonnull)imageOrUrlArray
                 withCurrentPageNum:(NSInteger)currentNum;
 
+
+/**
+ 清空图片缓存
+
+ @return 返回结果
+ */
++ (BOOL)clearLocalImages;
 
 @end

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3E1043452081839900395FD7 /* ct_refresh@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E1043442081839900395FD7 /* ct_refresh@2x.png */; };
 		3ECE9115207B884A0027CBC2 /* CTImageScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ECE910D207B884A0027CBC2 /* CTImageScrollView.m */; };
 		3ECE9116207B884A0027CBC2 /* CTDownloadWithSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ECE910F207B884A0027CBC2 /* CTDownloadWithSession.m */; };
 		3ECE9117207B884A0027CBC2 /* CTImagePath.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ECE9111207B884A0027CBC2 /* CTImagePath.m */; };
@@ -23,6 +24,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3E1043442081839900395FD7 /* ct_refresh@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ct_refresh@2x.png"; sourceTree = "<group>"; };
 		3ECE910D207B884A0027CBC2 /* CTImageScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CTImageScrollView.m; sourceTree = "<group>"; };
 		3ECE910E207B884A0027CBC2 /* CTDownloadWithSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CTDownloadWithSession.h; sourceTree = "<group>"; };
 		3ECE910F207B884A0027CBC2 /* CTDownloadWithSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CTDownloadWithSession.m; sourceTree = "<group>"; };
@@ -83,7 +85,7 @@
 				A4A95DE51DD8492000AC3B34 /* ViewController.h */,
 				A4A95DE61DD8492000AC3B34 /* ViewController.m */,
 				A4A95DE81DD8492000AC3B34 /* Main.storyboard */,
-				A4A95E051DD8496B00AC3B34 /* ShowPIcture */,
+				A4A95E051DD8496B00AC3B34 /* CTPicturesBrowser */,
 				A4A95DEE1DD8492000AC3B34 /* Assets.xcassets */,
 				A4A95DF01DD8492000AC3B34 /* LaunchScreen.storyboard */,
 				A4A95DF31DD8492000AC3B34 /* Info.plist */,
@@ -101,9 +103,10 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		A4A95E051DD8496B00AC3B34 /* ShowPIcture */ = {
+		A4A95E051DD8496B00AC3B34 /* CTPicturesBrowser */ = {
 			isa = PBXGroup;
 			children = (
+				3E1043442081839900395FD7 /* ct_refresh@2x.png */,
 				3ECE910E207B884A0027CBC2 /* CTDownloadWithSession.h */,
 				3ECE910F207B884A0027CBC2 /* CTDownloadWithSession.m */,
 				3ECE9110207B884A0027CBC2 /* CTImagePath.h */,
@@ -117,7 +120,7 @@
 				A4A95E0B1DD8496B00AC3B34 /* CTLazyImageView.h */,
 				A4A95E0C1DD8496B00AC3B34 /* CTLazyImageView.m */,
 			);
-			path = ShowPIcture;
+			path = CTPicturesBrowser;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -182,6 +185,7 @@
 				A4A95DF21DD8492000AC3B34 /* LaunchScreen.storyboard in Resources */,
 				A4A95DEF1DD8492000AC3B34 /* Assets.xcassets in Resources */,
 				A4A95DEA1DD8492000AC3B34 /* Main.storyboard in Resources */,
+				3E1043452081839900395FD7 /* ct_refresh@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

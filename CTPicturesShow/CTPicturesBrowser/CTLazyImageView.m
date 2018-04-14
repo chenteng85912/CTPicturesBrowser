@@ -11,8 +11,6 @@
 #import "CTSemaphoreGCD.h"
 #import "CTImagePath.h"
 
-#define Device_height   [[UIScreen mainScreen] bounds].size.height
-#define Device_width    [[UIScreen mainScreen] bounds].size.width
 
 @interface CTLazyImageView ()<TJSessionDownloadToolDelegate>
 
@@ -63,21 +61,19 @@
     self.urlStr = imgUrl;
     
     NSString *filePath  = [CTImagePath getImagePathWithURLstring:imgUrl];
-    if([[NSFileManager defaultManager] fileExistsAtPath:filePath ])
-    {
-        UIImage *savedImage = [UIImage imageWithContentsOfFile:filePath];
-        if (savedImage) {
-            self.image = savedImage;
-            if (self.fullScreen) {
-                self.frame = [self makeImageViewFrame:savedImage];
-
-            }
-            return YES;
+    
+    UIImage *savedImage = [UIImage imageWithContentsOfFile:filePath];
+    if (savedImage) {
+        self.image = savedImage;
+        if (self.fullScreen) {
+            self.frame = [self makeImageViewFrame:savedImage];
+            
         }
-        return NO;
+        return YES;
     }
+   
     return NO;
-
+    
 }
 //生成下载工具
 - (CTDownloadWithSession *)getDownloadToolFromTempArray:(NSString *)urlStr{
@@ -113,22 +109,22 @@
 - (CGRect)makeImageViewFrame:(UIImage *)image{
     
     CGSize imageSize = image.size;
-    CGFloat scaleW = imageSize.width/Device_width;
+    CGFloat scaleW = imageSize.width/kPictureBrowserScreenWidth;
     CGFloat picHeight = imageSize.height/scaleW;
     
     CGFloat picW;
     CGFloat picH;
     
-    if (picHeight>Device_height) {
-        CGFloat scaleH = picHeight/(Device_height);
-        picW = Device_width/scaleH;
-        picH = Device_height;
+    if (picHeight>kPictureBrowserScreenHeight) {
+        CGFloat scaleH = picHeight/(kPictureBrowserScreenHeight);
+        picW = kPictureBrowserScreenWidth/scaleH;
+        picH = kPictureBrowserScreenHeight;
     }else{
-        picW = Device_width;
+        picW = kPictureBrowserScreenWidth;
         picH = picHeight;
     }
     
-    CGRect newFrame = CGRectMake(Device_width/2-picW/2, Device_height/2-picH/2, picW, picH);
+    CGRect newFrame = CGRectMake(kPictureBrowserScreenWidth/2-picW/2, kPictureBrowserScreenHeight/2-picH/2, picW, picH);
     return  newFrame;
 }
 #pragma mark 重新下载
@@ -155,8 +151,13 @@
     [self.vwIndView stopAnimating];
     
     if (state) {//下载成功
-        [self loadImageFromURLString:urlStr];
-        
+        BOOL downloaded = [self loadImageFromURLString:urlStr];
+        if (!downloaded) {
+            //下载失败
+            self.reFreshBtn.hidden = !self.fullScreen;
+            [CTSemaphoreGCD downloadedFile:nil];
+            return;
+        }
         if (self.fullScreen) {
             self.transform = CGAffineTransformMakeScale(0.01,0.01);
             [UIView animateWithDuration:0.25 animations:^{
@@ -182,17 +183,10 @@
 - (UIButton *)reFreshBtn{
   
     if (_reFreshBtn==nil) {
-        _reFreshBtn = [[UIButton alloc] initWithFrame:CGRectMake(30, 60, 140, 35)];
-        _reFreshBtn.layer.masksToBounds = YES;
-        _reFreshBtn.layer.cornerRadius = 5.0;
-        _reFreshBtn.layer.borderColor = [UIColor whiteColor].CGColor;
-        _reFreshBtn.layer.borderWidth = 1.0;
-        _reFreshBtn.center = self.center;
-        [_reFreshBtn setTitle:@"加载失败,点击重试" forState:UIControlStateNormal];
-        [_reFreshBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        _reFreshBtn.titleLabel.font = [UIFont systemFontOfSize:15];
+        _reFreshBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 50, 50)];
+        _reFreshBtn.center  = self.center;
+        [_reFreshBtn setImage:[UIImage imageNamed:@"ct_refresh"] forState:UIControlStateNormal];
         [_reFreshBtn addTarget:self action:@selector(downloadImageAgain) forControlEvents:UIControlEventTouchUpInside];
-        _reFreshBtn.hidden = YES;
         if (self.superview&&[self.superview isKindOfClass:[UIScrollView class]]) {
             UIScrollView *scr = (UIScrollView *)self.superview;
             scr.maximumZoomScale = 1.0;
@@ -210,7 +204,7 @@
         _vwIndView = [UIActivityIndicatorView new];
         _vwIndView.hidesWhenStopped = YES;
         _vwIndView.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhite;
-        _vwIndView.center = CGPointMake(Device_width/2, Device_height/2-20);
+        _vwIndView.center = CGPointMake(kPictureBrowserScreenWidth/2, kPictureBrowserScreenHeight/2-20);
         [self addSubview:_vwIndView];
     }
     return _vwIndView;
@@ -218,7 +212,7 @@
 //图片下载进度
 - (UILabel *)progressLabel{
     if (_progressLabel==nil) {
-        _progressLabel  = [[UILabel alloc] initWithFrame:CGRectMake(Device_width/2-30, Device_height/2-10, 60, 40)];
+        _progressLabel  = [[UILabel alloc] initWithFrame:CGRectMake(kPictureBrowserScreenWidth/2-30, kPictureBrowserScreenHeight/2-10, 60, 40)];
         _progressLabel.textAlignment = NSTextAlignmentCenter;
         _progressLabel.font = [UIFont systemFontOfSize:15];
         _progressLabel.textColor = [UIColor whiteColor];

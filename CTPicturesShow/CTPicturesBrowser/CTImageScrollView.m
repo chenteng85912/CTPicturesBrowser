@@ -27,7 +27,7 @@
         self.delegate =self;
         self.showsVerticalScrollIndicator =NO;
         self.showsHorizontalScrollIndicator =NO;
-        self.maximumZoomScale = 3;
+        self.maximumZoomScale = 5;
         self.minimumZoomScale = 1;
 
         //承载当前图片的imageview
@@ -65,7 +65,7 @@
         [self setZoomScale:1.0 animated:YES];
     } else {
         CGPoint touchPoint = [gesture locationInView:_zoomImageView];
-        CGRect newRect = [self zoomRectForScale:self.maximumZoomScale withCenter:touchPoint];;
+        CGRect newRect = [self zoomRectForScale:3 withCenter:touchPoint];;
         [self zoomToRect:newRect animated:YES];
     }
 }

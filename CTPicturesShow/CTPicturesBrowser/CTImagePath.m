@@ -19,19 +19,20 @@
     return imgPath;
 }
 
-#pragma mark 获取图片根目录
-+ (NSString*)documentPath
+#pragma mark 获取图片根目录 拼接了 CTImagePreviewViewController
++ (NSString *)documentPath
 {
     //项目名称
     NSString *executableFile = [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleExecutableKey];
     
-    NSString *cachePath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:executableFile];
+    NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES).firstObject stringByAppendingPathComponent:executableFile];
     
     BOOL isDir = YES;
     BOOL isExist = [[NSFileManager defaultManager] fileExistsAtPath:cachePath isDirectory:&isDir];
-    if(!isExist || !isDir)
+    if(!isExist || !isDir){
+        
         [[NSFileManager defaultManager] createDirectoryAtPath:cachePath withIntermediateDirectories:NO attributes:nil error:nil];
-    
+    }
     return cachePath;
 }
 
