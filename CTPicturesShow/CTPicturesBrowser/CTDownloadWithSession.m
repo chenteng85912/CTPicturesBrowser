@@ -160,21 +160,7 @@ expectedTotalBytes:(int64_t)expectedTotalBytes
     }
     
 }
-//文件大小
-- (NSString *)makeSizeString:(float)filesize{
-    NSString *fileSizeString = @"";
-    
-    if(filesize/1024>=1024)
-    {
-        filesize = filesize/1024/1024;
-        fileSizeString = [NSString stringWithFormat:@"%.1f M",filesize];
-    }
-    else
-    {
-        fileSizeString = [NSString stringWithFormat:@"%d K",(int)filesize/1024];
-    }
-    return fileSizeString;
-}
+
 //浮点转百分比
 - (NSString *)makePasentFromFloat:(float)value{
     CFLocaleRef currentLocale = CFLocaleCopyCurrent();
