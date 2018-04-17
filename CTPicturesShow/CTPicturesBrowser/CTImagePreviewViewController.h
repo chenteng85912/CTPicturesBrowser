@@ -29,4 +29,6 @@
  */
 + (BOOL)clearLocalImages;
 
++ (NSCache *)imageCache;
+
 @end

@@ -10,10 +10,6 @@
 
 @interface CTLazyImageView : UIImageView
 
-// 加载网络图片 默认占位图 简化版SDWebImage
-- (void)loadImageFromURLString:(NSString*)imageURLString
-              placeholderImage:(UIImage *)placeholderImage;
-
 // 加载全屏网络图片
 - (void)loadFullScreenImage:(NSString *)imageURLString;
 

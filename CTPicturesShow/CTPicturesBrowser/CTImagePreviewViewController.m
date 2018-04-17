@@ -18,6 +18,7 @@ NSString *const CTImageShowIdentifier = @"CTImageShowIdentifier";
 @property (strong, nonatomic) UICollectionView *colView;
 @property (strong, nonatomic) NSArray *dataArray;//图片或者网址数据
 @property (strong, nonatomic) UILabel *pageNumLabel;//页码显示
+@property (nonatomic, strong) NSCache *imageCache;
 
 @end
 
@@ -33,13 +34,20 @@ NSString *const CTImageShowIdentifier = @"CTImageShowIdentifier";
         static dispatch_once_t once;
         dispatch_once(&once, ^{
             imageShowInstance = [[self alloc] init];
+            //内存对象
+            NSCache *imageCache = [NSCache new];
+            imageCache.countLimit = 100;
+            imageCache.totalCostLimit = 10 * 1024 * 1024;
+            imageShowInstance.imageCache = imageCache;
             [imageShowInstance initUI];
 
         });
         return imageShowInstance;
     }
 }
-
++ (NSCache *)imageCache{
+    return self.imageCache;
+}
 #pragma mark 界面布局
 - (void)initUI{
     
@@ -78,7 +86,7 @@ NSString *const CTImageShowIdentifier = @"CTImageShowIdentifier";
         return;
     }
 
-    [[self defaultShowPicture] showPicture:imageArray withCurrentPageNum:currentNum];
+    [self.defaultShowPicture showPicture:imageArray withCurrentPageNum:currentNum];
 }
 
 - (void)showPicture:(NSArray *__nonnull)imageArray
@@ -98,7 +106,7 @@ NSString *const CTImageShowIdentifier = @"CTImageShowIdentifier";
     [self.colView reloadData];
     
     [self.colView setContentOffset:CGPointMake((kPictureBrowserScreenWidth+20)*currentNum, 0)];
-    self.pageNumLabel.text = [NSString stringWithFormat:@"%ld/%lu",currentNum+1,(unsigned long)imageArray.count];
+    self.pageNumLabel.text = [NSString stringWithFormat:@"%d/%lu",currentNum+1,(unsigned long)imageArray.count];
     
     self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     

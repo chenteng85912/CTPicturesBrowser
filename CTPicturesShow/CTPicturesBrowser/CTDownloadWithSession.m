@@ -7,6 +7,7 @@
 //
 
 #import "CTDownloadWithSession.h"
+#import "CTImagePreviewViewController.h"
 
 @interface CTDownloadWithSession ()<NSURLSessionDelegate,NSURLSessionDownloadDelegate>
 
@@ -97,7 +98,16 @@ didFinishDownloadingToURL:(NSURL *)location
 {
     
     self.downloadState = DownloadSuccessState;
+    //写入缓存
    [[NSFileManager defaultManager] moveItemAtPath:location.path toPath:self.filePath error:nil];
+    
+    //写入内存
+    NSCache *imgsCache = [CTImagePreviewViewController imageCache];
+    NSPurgeableData *purgeableData = [NSPurgeableData dataWithContentsOfFile:self.filePath];
+    if (purgeableData) {
+        [imgsCache setObject:purgeableData forKey:self.filePath cost:purgeableData.length];
+    }
+    [purgeableData endContentAccess];
     
     dispatch_async(dispatch_get_main_queue(), ^{
         if ([self.delegate respondsToSelector:@selector(downLoadedSuccessOrFail:withUrl:)]) {

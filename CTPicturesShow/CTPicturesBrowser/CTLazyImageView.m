@@ -10,7 +10,7 @@
 #import "CTDownloadWithSession.h"
 #import "CTSemaphoreGCD.h"
 #import "CTImagePath.h"
-
+#import "CTImagePreviewViewController.h"
 
 @interface CTLazyImageView ()<TJSessionDownloadToolDelegate>
 
@@ -18,29 +18,15 @@
 @property (nonatomic, strong) UILabel *progressLabel;//下载进度
 @property (nonatomic, strong) UIButton *reFreshBtn;//重新下载按钮
 @property (nonatomic, strong) NSString *urlStr;//下载地址
-@property (nonatomic, assign) BOOL fullScreen;//全屏预览模式
 
 @end
 @implementation CTLazyImageView
 
-#pragma mark 加载网络图片 默认占位图
-- (void)loadImageFromURLString:(NSString*)imageURLString
-              placeholderImage:(UIImage *)placeholderImage{
-    self.image = placeholderImage;
-    if (!imageURLString) {
-        self.image = nil;
-        return;
-    }
-    if (![self loadImageFromURLString:imageURLString]) {
-        [self getDownloadToolFromTempArray:imageURLString];
-        
-    }
-   
-}
+
 #pragma mark 加载网络图片
 - (void)loadFullScreenImage:(NSString*)imageURLString{
     self.image = nil;
-    self.fullScreen = YES;
+
     if (!imageURLString) {
         return;
     }
@@ -48,27 +34,42 @@
         //显示加载进度
         [self.vwIndView startAnimating];
 
-        CTDownloadWithSession *request = [self getDownloadToolFromTempArray:imageURLString];
-        request.delegate = self;
-        self.progressLabel.text = request.percentStr;
+        [self creatDownloadRequestAndStartDownload:imageURLString];
     
     }
 
 }
 
-//读取本地存储图片
+//读取本地图片
 - (BOOL)loadImageFromURLString:(NSString *)imgUrl{
     self.urlStr = imgUrl;
     
     NSString *filePath  = [CTImagePath getImagePathWithURLstring:imgUrl];
     
-    UIImage *savedImage = [UIImage imageWithContentsOfFile:filePath];
+    UIImage *savedImage;
+    
+    NSCache *imgsCache = [CTImagePreviewViewController imageCache];
+    NSPurgeableData *cachedData = [imgsCache objectForKey:imgUrl];
+    if (cachedData) {
+        //读取内存成功
+        [cachedData beginContentAccess];
+        savedImage = [UIImage imageWithData:cachedData];
+        [cachedData endContentAccess];
+    }else{
+        //存入内存
+        savedImage = [UIImage imageWithContentsOfFile:filePath];
+        cachedData = [NSPurgeableData dataWithContentsOfFile:filePath];
+        if (cachedData) {
+            [imgsCache setObject:cachedData forKey:filePath cost:cachedData.length];
+        }
+        [cachedData endContentAccess];
+      
+    }
+    
     if (savedImage) {
         self.image = savedImage;
-        if (self.fullScreen) {
-            self.frame = [self makeImageViewFrame:savedImage];
-            
-        }
+        self.frame = [self makeImageViewFrame:savedImage];
+        
         return YES;
     }
    
@@ -76,7 +77,7 @@
     
 }
 //生成下载工具
-- (CTDownloadWithSession *)getDownloadToolFromTempArray:(NSString *)urlStr{
+- (void)creatDownloadRequestAndStartDownload:(NSString *)urlStr{
     
     CTDownloadWithSession *request = [CTSemaphoreGCD oldDownloadTool:urlStr];
    
@@ -95,7 +96,8 @@
     }
     
     request.delegate  = self;
-    return request;
+    self.progressLabel.text = request.percentStr;
+
 }
 - (void)loadFullImage:(UIImage *)image{
     if (image) {
@@ -139,11 +141,8 @@
 
 #pragma mark TJSessionDownloadToolDelegate
 - (void)changeProgressValue:(NSString *)progress{
-    if (self.fullScreen) {
-        self.progressLabel.text = progress;
-        
-    }
-    
+    self.progressLabel.text = progress;
+
 }
 - (void)downLoadedSuccessOrFail:(BOOL)state withUrl:(NSString *)urlStr{
     
@@ -154,26 +153,25 @@
         BOOL downloaded = [self loadImageFromURLString:urlStr];
         if (!downloaded) {
             //下载失败
-            self.reFreshBtn.hidden = !self.fullScreen;
+            self.reFreshBtn.hidden = NO;
             [CTSemaphoreGCD downloadedFile:nil];
             return;
         }
-        if (self.fullScreen) {
-            self.transform = CGAffineTransformMakeScale(0.01,0.01);
-            [UIView animateWithDuration:0.25 animations:^{
-                [UIView setAnimationBeginsFromCurrentState:YES];
-                [UIView setAnimationCurve:7];
-                self.transform = CGAffineTransformMakeScale(1.0,1.0);
-                
-            }];
+        self.transform = CGAffineTransformMakeScale(0.01,0.01);
+        [UIView animateWithDuration:0.25 animations:^{
+            [UIView setAnimationBeginsFromCurrentState:YES];
+            [UIView setAnimationCurve:7];
+            self.transform = CGAffineTransformMakeScale(1.0,1.0);
             
-            self.userInteractionEnabled = YES;
-        }
+        }];
+        
+        self.userInteractionEnabled = YES;
+        
         [CTSemaphoreGCD downloadedFile:urlStr];
 
     }else{
         //下载失败
-        self.reFreshBtn.hidden = !self.fullScreen;
+        self.reFreshBtn.hidden = NO;
         [CTSemaphoreGCD downloadedFile:nil];
 
     }
