@@ -46,7 +46,7 @@ NSString *const CTImageShowIdentifier = @"CTImageShowIdentifier";
     }
 }
 + (NSCache *)imageCache{
-    return self.imageCache;
+    return [CTImagePreviewViewController defaultShowPicture].imageCache;
 }
 #pragma mark 界面布局
 - (void)initUI{
