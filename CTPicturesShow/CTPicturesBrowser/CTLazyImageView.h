@@ -10,11 +10,18 @@
 
 @interface CTLazyImageView : UIImageView
 
+/**
+ 加载全屏网络图片
 
-// 加载全屏网络图片
+ @param imageURLString 图片下载地址
+ */
 - (void)loadFullScreenImage:(NSString *)imageURLString;
 
-// 直接加载图片
+/**
+ 直接加载图片
+
+ @param image 图片对象
+ */
 - (void)loadFullImage:(UIImage *)image;
 
 @end
