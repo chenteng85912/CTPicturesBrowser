@@ -7,83 +7,45 @@
 //
 
 #import "CTDownloadWithSession.h"
-#import "CTImagePreviewViewController.h"
+#import "CTImagePath.h"
+#import "CTSemaphoreGCD.h"
 
-@interface CTDownloadWithSession ()<NSURLSessionDelegate,NSURLSessionDownloadDelegate>
+@interface CTDownloadWithSession ()<NSURLSessionDownloadDelegate,NSURLSessionDelegate>
 
-@property (nonatomic, strong) NSData *partialData;//暂停数据
 @property (nonatomic, strong) NSURLSession *session;//下载任务
 @property (nonatomic, strong) NSURLSessionDownloadTask *task;//下载请求
-
+@property (nonatomic, copy) NSString *filePath;     //文件本地地址
+@property (nonatomic, copy) NSString *urlStr;     //下载链接
 @end
+
 @implementation CTDownloadWithSession
 {
     long long contentLenght;
 }
-+ (instancetype)initWithUrlStr:(NSString *)urlStr
-                      filePath:(NSString *)filePath{
-    return [[self alloc] initWithDownloadUrlStr:urlStr filePath:filePath];
++ (instancetype)initWithUrlStr:(NSString *)urlStr{
+    return [[self alloc] initWithDownloadUrlStr:urlStr];
 }
-- (instancetype)initWithDownloadUrlStr:(NSString *)urlStr
-                              filePath:(NSString *)filePath{
+- (instancetype)initWithDownloadUrlStr:(NSString *)urlStr{
     self = [super init];
     if (self) {
         _urlStr = urlStr;
-        _filePath = filePath;
+        _filePath = [CTImagePath getImagePathWithURLstring:urlStr];
     }
     return self;
 }
-- (NSURLSession *)session
-{
-    if (!_session) {
-        NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
 
-        _session = [NSURLSession sessionWithConfiguration:sessionConfig delegate:self delegateQueue:[NSOperationQueue new]];
-    }
-    return _session;
-    
-}
 
 //开始下载
 -(void)startDownload
 {
     //创建网络任务
-    self.task = [self.session downloadTaskWithURL:[NSURL URLWithString:self.urlStr]];
+    self.task = [self.session downloadTaskWithURL:[NSURL URLWithString:_urlStr]];
+
     [self.task resume];
     NSLog(@"start download task");
     self.downloadState = DownloadingState;
 }
-//暂停下载
--(void)pauseDownload
-{
-    NSLog(@"Pause download task");
-    if (self.task) {
-        //取消下载任务，把已下载数据存起来
-        __weak typeof(self) vc = self;
-        [self.task cancelByProducingResumeData:^(NSData *resumeData) {
-            
-            if (resumeData) {
-                vc.partialData = resumeData;
-            }
-            vc.task = nil;
-            
-        }];
-    }
-}
-//恢复下载
--(void)resumeDownload
-{
-    NSLog(@"resume download task");
-    //判断是否又已下载数据，有的话就断点续传，没有就完全重新下载
-    if (self.partialData) {
-        self.task = [self.session downloadTaskWithResumeData:self.partialData];
-        
-    }else{
-        self.task = [self.session downloadTaskWithURL:[NSURL URLWithString:self.urlStr]];
-        
-    }
-    [self.task resume];
-}
+
 //取消下载
 - (void)cancelDownload{
     if (self.task) {
@@ -96,26 +58,31 @@
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask
 didFinishDownloadingToURL:(NSURL *)location
 {
-    
+    //取消任务 防止循环引用
+    [self.session invalidateAndCancel];
+    self.session = nil;
+    self.task = nil;
+
     self.downloadState = DownloadSuccessState;
     //写入缓存
    [[NSFileManager defaultManager] moveItemAtPath:location.path toPath:self.filePath error:nil];
     
     //写入内存
-    NSCache *imgsCache = [CTImagePreviewViewController imageCache];
     NSPurgeableData *purgeableData = [NSPurgeableData dataWithContentsOfFile:self.filePath];
     if (purgeableData) {
-        [imgsCache setObject:purgeableData forKey:self.filePath cost:purgeableData.length];
+        [CTSemaphoreGCD.imageCache setObject:purgeableData forKey:self.filePath cost:purgeableData.length];
     }
     [purgeableData endContentAccess];
     
+    [CTSemaphoreGCD downloadedFile:self.urlStr];
+
     dispatch_async(dispatch_get_main_queue(), ^{
-        if ([self.delegate respondsToSelector:@selector(downLoadedSuccessOrFail:withUrl:)]) {
-            [self.delegate downLoadedSuccessOrFail:YES withUrl:self.urlStr];
+        if ([self.delegate respondsToSelector:@selector(downLoadedSuccessOrFail:)]) {
+            [self.delegate downLoadedSuccessOrFail:YES];
         }
+        
     });
-    
-    self.task = nil;
+
     
 }
 
@@ -135,14 +102,20 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
     
     float currentProgress = totalBytesWritten/(double)totalBytesExpectedToWrite;
     
-    self.percentStr = [NSString stringWithFormat:@"%@",[self makePasentFromFloat:currentProgress]];
+    if (currentProgress>0) {
+        self.percentStr = [NSString stringWithFormat:@"%@",[self makePasentFromFloat:currentProgress]];
+        NSLog(@"正在下载文件...:%@",self.percentStr);
+
+    }else{
+        self.percentStr = nil;
+
+    }
     dispatch_async(dispatch_get_main_queue(), ^{
         if ([self.delegate respondsToSelector:@selector(changeProgressValue:)]) {
             [self.delegate changeProgressValue:self.percentStr];
         }
         
     });
-    NSLog(@"正在下载文件...:%@",self.percentStr);
 
 }
 /** 续传的代理方法 */
@@ -156,14 +129,19 @@ expectedTotalBytes:(int64_t)expectedTotalBytes
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
 {
     if (error) {
+        //取消任务 防止循环引用
+        [self.session invalidateAndCancel];
+        self.session = nil;
+        self.task = nil;
         self.downloadState = DownloadFailState;
-        // 保存恢复数据
-        self.partialData = error.userInfo[NSURLSessionDownloadTaskResumeData];
+
         NSLog(@"error:%@",error.userInfo);
+        [CTSemaphoreGCD downloadedFile:nil];
+
         dispatch_async(dispatch_get_main_queue(), ^{
             
-            if ([self.delegate respondsToSelector:@selector(downLoadedSuccessOrFail:withUrl:)]) {
-                [self.delegate downLoadedSuccessOrFail:NO withUrl:self.urlStr];
+            if ([self.delegate respondsToSelector:@selector(downLoadedSuccessOrFail:)]) {
+                [self.delegate downLoadedSuccessOrFail:self.urlStr];
             }
         });
         
@@ -218,5 +196,20 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
     if (completionHandler) {
         completionHandler(disposition, credential);
     }
+}
+
+- (NSURLSession *)session
+{
+    if (!_session) {
+        NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+        
+        _session = [NSURLSession sessionWithConfiguration:sessionConfig delegate:self delegateQueue:[NSOperationQueue currentQueue]];
+    }
+    return _session;
+    
+}
+- (void)dealloc{
+    
+    NSLog(@"%@ CTDownloadWithSession dealloc",_urlStr);
 }
 @end

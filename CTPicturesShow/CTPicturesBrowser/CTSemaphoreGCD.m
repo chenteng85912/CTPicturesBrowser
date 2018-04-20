@@ -20,6 +20,8 @@ NSInteger const maxNum = 99;
 
 @property (strong, nonatomic) dispatch_semaphore_t uploadSemaphore;//信号量
 
+@property (nonatomic, strong) NSCache *imageCache;
+
 @end
 
 @implementation CTSemaphoreGCD
@@ -34,20 +36,29 @@ NSInteger const maxNum = 99;
         UploadGCD.uploadQueue =  dispatch_queue_create("CTImageSemaphoreGCD", DISPATCH_QUEUE_CONCURRENT);
         UploadGCD.uploadSemaphore = dispatch_semaphore_create(maxNum);
 
+        //内存对象
+        NSCache *imageCache = [NSCache new];
+        imageCache.countLimit = 100;
+        imageCache.totalCostLimit = 10 * 1024 * 1024;// 10 M
+        UploadGCD.imageCache = imageCache;
+        
         NSLog(@"同时上传数量：%ld",(long)maxNum);
 
     });
     return UploadGCD;
 }
-
++ (NSCache *)imageCache{
+    return [self shareSemaphoreGCD].imageCache;
+}
 + (CTDownloadWithSession *)oldDownloadTool:(NSString *)urlStr{
     if (!urlStr) {
         return nil;
     }
     return [self shareSemaphoreGCD].prepareUploadArray[urlStr];
 }
-+ (void)addNewDownloadQueue:(CTDownloadWithSession *)download{
-    [[self shareSemaphoreGCD].prepareUploadArray setObject:download forKey:download.urlStr];
++ (void)addNewDownloadQueue:(CTDownloadWithSession *)download
+                     forKey:(NSString *)urlStr{
+    [[self shareSemaphoreGCD].prepareUploadArray setObject:download forKey:urlStr];
     [self startDownload:download];
 }
 //重新上传

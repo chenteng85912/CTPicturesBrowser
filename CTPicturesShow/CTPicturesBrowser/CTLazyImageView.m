@@ -10,7 +10,6 @@
 #import "CTDownloadWithSession.h"
 #import "CTSemaphoreGCD.h"
 #import "CTImagePath.h"
-#import "CTImagePreviewViewController.h"
 
 @interface CTLazyImageView ()<TJSessionDownloadToolDelegate>
 
@@ -18,10 +17,10 @@
 @property (nonatomic, strong) UILabel *progressLabel;//下载进度
 @property (nonatomic, strong) UIButton *reFreshBtn;//重新下载按钮
 @property (nonatomic, strong) NSString *urlStr;//下载地址
+@property (nonatomic, strong) CTDownloadWithSession *session;
 
 @end
 @implementation CTLazyImageView
-
 
 #pragma mark 加载网络图片
 - (void)loadFullScreenImage:(NSString*)imageURLString{
@@ -30,26 +29,32 @@
     if (!imageURLString) {
         return;
     }
-    if (![self loadImageFromURLString:imageURLString]) {
+    self.urlStr = imageURLString;
+
+    if (![self p_loadImageFromURLString:imageURLString]) {
         //显示加载进度
         [self.vwIndView startAnimating];
 
-        [self creatDownloadRequestAndStartDownload:imageURLString];
+        [self p_downLoadImage];
     
     }
 
 }
-
+- (void)loadFullImage:(UIImage *)image{
+    if (image) {
+        self.image = image;
+        self.frame = [self p_makeImageViewFrame:image];
+    }
+    
+}
 //读取本地图片
-- (BOOL)loadImageFromURLString:(NSString *)imgUrl{
-    self.urlStr = imgUrl;
+- (BOOL)p_loadImageFromURLString:(NSString *)imgUrl{
     
     NSString *filePath  = [CTImagePath getImagePathWithURLstring:imgUrl];
     
     UIImage *savedImage;
     
-    NSCache *imgsCache = [CTImagePreviewViewController imageCache];
-    NSPurgeableData *cachedData = [imgsCache objectForKey:imgUrl];
+    NSPurgeableData *cachedData = [CTSemaphoreGCD.imageCache objectForKey:filePath];
     if (cachedData) {
         //读取内存成功
         [cachedData beginContentAccess];
@@ -60,15 +65,15 @@
         savedImage = [UIImage imageWithContentsOfFile:filePath];
         cachedData = [NSPurgeableData dataWithContentsOfFile:filePath];
         if (cachedData) {
-            [imgsCache setObject:cachedData forKey:filePath cost:cachedData.length];
+            [CTSemaphoreGCD.imageCache setObject:cachedData forKey:filePath cost:cachedData.length];
         }
         [cachedData endContentAccess];
       
     }
-    
+
     if (savedImage) {
         self.image = savedImage;
-        self.frame = [self makeImageViewFrame:savedImage];
+        self.frame = [self p_makeImageViewFrame:savedImage];
         
         return YES;
     }
@@ -77,38 +82,24 @@
     
 }
 //生成下载工具
-- (void)creatDownloadRequestAndStartDownload:(NSString *)urlStr{
+- (void)p_downLoadImage{
     
-    CTDownloadWithSession *request = [CTSemaphoreGCD oldDownloadTool:urlStr];
-   
+    CTDownloadWithSession *request = [CTSemaphoreGCD oldDownloadTool:self.urlStr];
+
     //新的下载工具
     if (!request) {
-        NSString *filePath  = [CTImagePath getImagePathWithURLstring:urlStr];
 
-        request = [CTDownloadWithSession initWithUrlStr:urlStr filePath:filePath];
-        [CTSemaphoreGCD addNewDownloadQueue:request];
-        
-    }else{
-        if (request.downloadState==DownloadFailState) {
-            [CTSemaphoreGCD reDownloadFile:self.urlStr];
-
-        }
+        request = [CTDownloadWithSession initWithUrlStr:self.urlStr];
+        [CTSemaphoreGCD addNewDownloadQueue:request forKey:self.urlStr];
     }
     
     request.delegate  = self;
     self.progressLabel.text = request.percentStr;
-
-}
-- (void)loadFullImage:(UIImage *)image{
-    if (image) {
-        self.image = image;
-        self.frame = [self makeImageViewFrame:image];
-    }
     
 }
 
 #pragma mark 根据图片大小设置imageview的frame
-- (CGRect)makeImageViewFrame:(UIImage *)image{
+- (CGRect)p_makeImageViewFrame:(UIImage *)image{
     
     CGSize imageSize = image.size;
     CGFloat scaleW = imageSize.width/kPictureBrowserScreenWidth;
@@ -130,13 +121,13 @@
     return  newFrame;
 }
 #pragma mark 重新下载
-- (void)downloadImageAgain{
+- (void)p_reDownloadImage{
     
     [self.vwIndView startAnimating];
     self.reFreshBtn.hidden = YES;
     self.progressLabel.hidden = NO;
     
-    [CTSemaphoreGCD reDownloadFile:self.urlStr];
+    [self p_downLoadImage];
 }
 
 #pragma mark TJSessionDownloadToolDelegate
@@ -144,19 +135,13 @@
     self.progressLabel.text = progress;
 
 }
-- (void)downLoadedSuccessOrFail:(BOOL)state withUrl:(NSString *)urlStr{
-    
-    self.progressLabel.hidden = YES;
+- (void)downLoadedSuccessOrFail:(BOOL)state{
+    self.progressLabel.text = nil;
+    self.progressLabel.hidden = state;
     [self.vwIndView stopAnimating];
-    
+
     if (state) {//下载成功
-        BOOL downloaded = [self loadImageFromURLString:urlStr];
-        if (!downloaded) {
-            //下载失败
-            self.reFreshBtn.hidden = NO;
-            [CTSemaphoreGCD downloadedFile:nil];
-            return;
-        }
+        [self p_loadImageFromURLString:self.urlStr];
         self.transform = CGAffineTransformMakeScale(0.01,0.01);
         [UIView animateWithDuration:0.25 animations:^{
             [UIView setAnimationBeginsFromCurrentState:YES];
@@ -164,16 +149,6 @@
             self.transform = CGAffineTransformMakeScale(1.0,1.0);
             
         }];
-        
-        self.userInteractionEnabled = YES;
-        
-        [CTSemaphoreGCD downloadedFile:urlStr];
-
-    }else{
-        //下载失败
-        self.reFreshBtn.hidden = NO;
-        [CTSemaphoreGCD downloadedFile:nil];
-
     }
 }
 
@@ -184,7 +159,7 @@
         _reFreshBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 50, 50)];
         _reFreshBtn.center  = self.center;
         [_reFreshBtn setImage:[UIImage imageNamed:@"ct_refresh"] forState:UIControlStateNormal];
-        [_reFreshBtn addTarget:self action:@selector(downloadImageAgain) forControlEvents:UIControlEventTouchUpInside];
+        [_reFreshBtn addTarget:self action:@selector(p_reDownloadImage) forControlEvents:UIControlEventTouchUpInside];
         if (self.superview&&[self.superview isKindOfClass:[UIScrollView class]]) {
             UIScrollView *scr = (UIScrollView *)self.superview;
             scr.maximumZoomScale = 1.0;
@@ -219,4 +194,5 @@
     }
     return _progressLabel;
 }
+
 @end

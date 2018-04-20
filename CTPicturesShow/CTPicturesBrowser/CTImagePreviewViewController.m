@@ -18,7 +18,6 @@ NSString *const CTImageShowIdentifier = @"CTImageShowIdentifier";
 @property (strong, nonatomic) UICollectionView *colView;
 @property (strong, nonatomic) NSArray *dataArray;//图片或者网址数据
 @property (strong, nonatomic) UILabel *pageNumLabel;//页码显示
-@property (nonatomic, strong) NSCache *imageCache;
 
 @end
 
@@ -34,20 +33,14 @@ NSString *const CTImageShowIdentifier = @"CTImageShowIdentifier";
         static dispatch_once_t once;
         dispatch_once(&once, ^{
             imageShowInstance = [[self alloc] init];
-            //内存对象
-            NSCache *imageCache = [NSCache new];
-            imageCache.countLimit = 100;
-            imageCache.totalCostLimit = 10 * 1024 * 1024;
-            imageShowInstance.imageCache = imageCache;
+          
             [imageShowInstance initUI];
 
         });
         return imageShowInstance;
     }
 }
-+ (NSCache *)imageCache{
-    return self.imageCache;
-}
+
 #pragma mark 界面布局
 - (void)initUI{
     
@@ -68,7 +61,7 @@ NSString *const CTImageShowIdentifier = @"CTImageShowIdentifier";
 
     UILabel *pageLabel = [[UILabel alloc] initWithFrame:CGRectMake(kPictureBrowserScreenWidth/2-20, kPictureBrowserScreenHeight-60, 40, 26)];
     pageLabel.textAlignment = NSTextAlignmentCenter;
-    pageLabel.font = [UIFont systemFontOfSize:13];
+    pageLabel.font = [UIFont systemFontOfSize:12];
     pageLabel.textColor = [UIColor whiteColor];
     pageLabel.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.3];
     pageLabel.layer.masksToBounds = YES;

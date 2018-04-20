@@ -11,10 +11,13 @@
 
 @interface CTSemaphoreGCD : NSObject
 
++ (NSCache *)imageCache;
+
 + (CTDownloadWithSession *)oldDownloadTool:(NSString *)urlStr;
 
 //添加上传队列
-+ (void)addNewDownloadQueue:(CTDownloadWithSession *)download;
++ (void)addNewDownloadQueue:(CTDownloadWithSession *)download
+                     forKey:(NSString *)urlStr;
 
 //重新上传
 + (void)reDownloadFile:(NSString *)urlStr;

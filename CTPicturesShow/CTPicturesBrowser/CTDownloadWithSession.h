@@ -22,7 +22,7 @@ typedef NS_ENUM(NSInteger,ImageDownloadState) {
 - (void)changeProgressValue:(NSString *)progress;//发送下载进度
 
 //下载成功或失败
-- (void)downLoadedSuccessOrFail:(BOOL)state withUrl:(NSString *)urlStr;
+- (void)downLoadedSuccessOrFail:(BOOL)state;
 
 @end
 
@@ -30,19 +30,16 @@ typedef NS_ENUM(NSInteger,ImageDownloadState) {
 
 @property (nonatomic, weak) id<TJSessionDownloadToolDelegate>delegate;
 @property (nonatomic, strong) NSString *percentStr; //下载进度百分比
-@property (nonatomic, strong) NSString *filePath;   //下载完成后存入的本地路径
-@property (nonatomic, strong) NSString *urlStr;     //下载链接
+
 @property (nonatomic, assign) ImageDownloadState downloadState;
 
 /**
  *  传入下载地址 实例化下载对象
  */
-+ (instancetype)initWithUrlStr:(NSString *)urlStr
-                      filePath:(NSString *)filePath;
++ (instancetype)initWithUrlStr:(NSString *)urlStr;
 
 - (void)startDownload;//开始下载
-- (void)pauseDownload;//暂停下载
-- (void)resumeDownload;//继续下载
+
 - (void)cancelDownload;//取消下载
 
 @end

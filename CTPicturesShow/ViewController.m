@@ -21,15 +21,8 @@
 }
 - (IBAction)showPicAction:(id)sender {
     
-//    [CTImagePreviewViewController showPictureWithUrlOrImages:<#(NSArray * _Nonnull)#> withCurrentPageNum:<#(NSInteger)#>] 
+    [CTImagePreviewViewController showPictureWithUrlOrImages:@[@"http://up.enterdesk.com/edpic_source/1b/79/40/1b7940ec78c11a7e897bf702db3a77ac.jpg"] withCurrentPageNum:0];
     
 }
-
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
 
 @end
