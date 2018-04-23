@@ -36,7 +36,7 @@
 
 
 //开始下载
--(void)startDownload
+- (void)startDownload
 {
     //创建网络任务
     self.task = [self.session downloadTaskWithURL:[NSURL URLWithString:_urlStr]];
@@ -51,6 +51,9 @@
     if (self.task) {
         [self.task cancel];
     }
+    //取消任务 防止循环引用
+    [self.session invalidateAndCancel];
+    self.session = nil;
     self.task = nil;
 }
 #pragma mark NSURLSessionDownloadDelegate
@@ -64,14 +67,15 @@ didFinishDownloadingToURL:(NSURL *)location
     self.task = nil;
 
     self.downloadState = DownloadSuccessState;
-    //写入缓存
-   [[NSFileManager defaultManager] moveItemAtPath:location.path toPath:self.filePath error:nil];
-    
+  
     //写入内存
     NSPurgeableData *purgeableData = [NSPurgeableData dataWithContentsOfFile:self.filePath];
     if (purgeableData) {
         [CTSemaphoreGCD.imageCache setObject:purgeableData forKey:self.filePath cost:purgeableData.length];
     }
+    //写入缓存
+    [[NSFileManager defaultManager] moveItemAtPath:location.path toPath:self.filePath error:nil];
+    
     [purgeableData endContentAccess];
     
     [CTSemaphoreGCD downloadedFile:self.urlStr];
@@ -104,7 +108,7 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
     
     if (currentProgress>0) {
         self.percentStr = [NSString stringWithFormat:@"%@",[self makePasentFromFloat:currentProgress]];
-        NSLog(@"正在下载文件...:%@",self.percentStr);
+//        NSLog(@"正在下载文件...:%@",self.percentStr);
 
     }else{
         self.percentStr = nil;
@@ -141,7 +145,7 @@ expectedTotalBytes:(int64_t)expectedTotalBytes
         dispatch_async(dispatch_get_main_queue(), ^{
             
             if ([self.delegate respondsToSelector:@selector(downLoadedSuccessOrFail:)]) {
-                [self.delegate downLoadedSuccessOrFail:self.urlStr];
+                [self.delegate downLoadedSuccessOrFail:NO];
             }
         });
         

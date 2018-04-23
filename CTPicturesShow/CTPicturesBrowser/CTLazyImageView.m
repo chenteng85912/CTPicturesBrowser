@@ -1,7 +1,5 @@
 //
 //  LazyImageView.m
-//  FacePk
-//
 //  Created by 腾 on 16/6/26.
 //  Copyright © 2016年 腾. All rights reserved.
 //
@@ -156,7 +154,7 @@
 - (UIButton *)reFreshBtn{
   
     if (_reFreshBtn==nil) {
-        _reFreshBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 50, 50)];
+        _reFreshBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
         _reFreshBtn.center  = self.center;
         [_reFreshBtn setImage:[UIImage imageNamed:@"ct_refresh"] forState:UIControlStateNormal];
         [_reFreshBtn addTarget:self action:@selector(p_reDownloadImage) forControlEvents:UIControlEventTouchUpInside];
@@ -187,7 +185,7 @@
     if (_progressLabel==nil) {
         _progressLabel  = [[UILabel alloc] initWithFrame:CGRectMake(kPictureBrowserScreenWidth/2-30, kPictureBrowserScreenHeight/2-10, 60, 40)];
         _progressLabel.textAlignment = NSTextAlignmentCenter;
-        _progressLabel.font = [UIFont systemFontOfSize:15];
+        _progressLabel.font = [UIFont systemFontOfSize:13];
         _progressLabel.textColor = [UIColor whiteColor];
         [self addSubview:_progressLabel];
 

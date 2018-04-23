@@ -30,7 +30,6 @@ typedef NS_ENUM(NSInteger,ImageDownloadState) {
 
 @property (nonatomic, weak) id<TJSessionDownloadToolDelegate>delegate;
 @property (nonatomic, strong) NSString *percentStr; //下载进度百分比
-
 @property (nonatomic, assign) ImageDownloadState downloadState;
 
 /**

@@ -45,7 +45,7 @@
         [self addGestureRecognizer:singleTapGesture];
         
         //双击放大
-        UITapGestureRecognizer *doubleTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self           action:@selector(doubleTap:)];
+        UITapGestureRecognizer *doubleTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doubleTap:)];
         [doubleTapGesture setNumberOfTapsRequired:2];
         [self addGestureRecognizer:doubleTapGesture];
         
