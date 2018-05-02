@@ -2,8 +2,8 @@
 //  CTImageScrollView.m
 //  TYKYLibraryDemo
 //
-//  Created by tjsoft on 2017/11/21.
-//  Copyright © 2017年 Apple. All rights reserved.
+//  Created by TENG on 2017/11/21.
+//  Copyright © 2017年 TENG. All rights reserved.
 //
 
 #import "CTImageScrollView.h"
@@ -55,9 +55,8 @@
     return self;
 }
 - (void)singleTap:(UISwipeGestureRecognizer *)gesture{
-    if ([self.scrolDelegate respondsToSelector:@selector(singalTapAction)]) {
-        [self.scrolDelegate singalTapAction];
-    }
+    [self.scrollDelegate singalTapAction];
+    
 }
 - (void)doubleTap:(UITapGestureRecognizer *)gesture {
     //点击位置 为主中心 按比例选择周围区域 放到到整个屏幕

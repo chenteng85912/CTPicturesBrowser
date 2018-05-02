@@ -14,7 +14,7 @@
 
 @property (nonatomic, strong) NSURLSession *session;//下载任务
 @property (nonatomic, strong) NSURLSessionDownloadTask *task;//下载请求
-@property (nonatomic, copy) NSString *filePath;     //文件本地地址
+@property (nonatomic, copy) NSString *filePath;   //文件本地地址
 @property (nonatomic, copy) NSString *urlStr;     //下载链接
 @end
 

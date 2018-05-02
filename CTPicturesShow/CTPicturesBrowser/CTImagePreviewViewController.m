@@ -3,7 +3,7 @@
 //  TYKYTwoLearnOneDo
 //
 //  Created by Apple on 16/7/22.
-//  Copyright © 2016年 深圳太极云软技术股份有限公司. All rights reserved.
+//  Copyright © 2016年 TENG. All rights reserved.
 //
 
 #import "CTImagePreviewViewController.h"
@@ -125,7 +125,7 @@ NSString *const CTImageShowIdentifier = @"CTImageShowIdentifier";
     
     CTImageScrollView *scrView = [CTImageScrollView initWithFrame:CGRectMake(0, 0, kPictureBrowserScreenWidth, kPictureBrowserScreenHeight)
                                   image:self.dataArray[indexPath.row]];
-    scrView.scrolDelegate = self;
+    scrView.scrollDelegate = self;
     [mycell.contentView addSubview:scrView];
 
     return mycell;

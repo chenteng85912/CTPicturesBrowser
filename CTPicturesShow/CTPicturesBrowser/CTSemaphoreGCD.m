@@ -2,7 +2,7 @@
 //  TYKYSemaphoreGCD.m
 //  TYKYWallBaseSDK
 //
-//  Created by tjsoft on 2017/11/16.
+//  Created by TENG on 2017/11/16.
 //  Copyright © 2017年 TENG. All rights reserved.
 //
 

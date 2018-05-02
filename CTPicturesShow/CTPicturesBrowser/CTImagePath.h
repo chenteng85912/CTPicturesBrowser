@@ -2,7 +2,7 @@
 //  CTImagePath.h
 //  TJBaoAnWallSDK
 //
-//  Created by tjsoft on 2017/8/22.
+//  Created by TENG on 2017/8/22.
 //  Copyright © 2017年 TENG. All rights reserved.
 //
 

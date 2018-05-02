@@ -2,7 +2,7 @@
 //  CTImagePath.m
 //  TJBaoAnWallSDK
 //
-//  Created by tjsoft on 2017/8/22.
+//  Created by TENG on 2017/8/22.
 //  Copyright © 2017年 TENG. All rights reserved.
 //
 
@@ -19,7 +19,7 @@
     return imgPath;
 }
 
-#pragma mark 获取图片根目录 拼接了 CTImagePreviewViewController
+#pragma mark 获取图片根目录
 + (NSString *)documentPath
 {
     //项目名称
