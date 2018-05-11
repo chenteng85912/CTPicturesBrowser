@@ -7,6 +7,8 @@
 
  2、当前图片位置currentNum
  
-
+     //控制器
      [CTImagePreviewViewController showPictureWithUrlOrImages:@[image] withCurrentPageNum:0]
 
+     //视图
+     [CTPictureBrowser showPictureWithUrlOrImages:@[image] withCurrentPageNum:0]

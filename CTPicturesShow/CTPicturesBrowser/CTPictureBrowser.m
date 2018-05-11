@@ -1,19 +1,16 @@
 //
-//  ImagePreviewViewController.m
-//  TYKYTwoLearnOneDo
+//  CTPictureBrowser.m
+//  CTPicturesShow
 //
-//  Created by Apple on 16/7/22.
-//  Copyright © 2016年 TENG. All rights reserved.
+//  Created by 陈腾 on 2018/5/11.
+//  Copyright © 2018年 腾. All rights reserved.
 //
 
-#import "CTImagePreviewViewController.h"
-#import "CTImageScrollView.h"
+#import "CTPictureBrowser.h"
 #import "CTImagePath.h"
+#import "CTImageScrollView.h"
 
-
-NSString *const kCTImagePreviewViewControllerIdentifier = @"kCTImagePreviewViewControllerIdentifier";
-
-@interface CTImagePreviewViewController ()<UIScrollViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate,CTImageScrollViewDelegate>
+@interface CTPictureBrowser ()<UIScrollViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate,CTImageScrollViewDelegate>
 
 @property (strong, nonatomic) UICollectionView *colView;
 @property (strong, nonatomic) NSArray *dataArray;//图片或者网址数据
@@ -21,7 +18,9 @@ NSString *const kCTImagePreviewViewControllerIdentifier = @"kCTImagePreviewViewC
 
 @end
 
-@implementation CTImagePreviewViewController
+NSString *const kCTPictureBrowserIdentifier = @"kCTPictureBrowserIdentifier";
+
+@implementation CTPictureBrowser
 
 #pragma mark 展示图片
 + (void)showPictureWithUrlOrImages:(NSArray * __nonnull)imageArray
@@ -31,38 +30,38 @@ NSString *const kCTImagePreviewViewControllerIdentifier = @"kCTImagePreviewViewC
         return;
     }
     
-    CTImagePreviewViewController *preview = [[CTImagePreviewViewController alloc] initWithImageArray:imageArray withCurrentPageNum:currentNum];
+    CTPictureBrowser *browser = [[CTPictureBrowser alloc] initWithImageArray:imageArray withCurrentPageNum:currentNum];
+    
+    [[UIApplication sharedApplication].keyWindow addSubview:browser];
     UIWindow *window = [UIApplication sharedApplication].keyWindow;
     window.windowLevel = UIWindowLevelAlert;
-    
-    [[self p_currentViewController] presentViewController:preview animated:YES completion:nil];
+    browser.alpha = 0.0;
+    [UIView animateWithDuration:0.1 animations:^{
+        [UIView setAnimationBeginsFromCurrentState:YES];
+        [UIView setAnimationCurve:7];
+        browser.alpha = 1.0;
+
+    }];
+
 }
-
-- (instancetype)initWithImageArray:(NSArray *__nonnull)imageArray
- withCurrentPageNum:(NSInteger)currentNum{
-
-    self = [super init];
+- (instancetype)initWithImageArray:(NSArray * __nonnull)imageArray
+                withCurrentPageNum:(NSInteger)currentNum{
+    self = [super initWithFrame:[UIScreen mainScreen].bounds];
     if (self) {
+        
         if (imageArray.count<currentNum+1) {
             currentNum = imageArray.count-1;
         }
         
-        if (imageArray.count==1) {
-            self.pageNumLabel.hidden = YES;
-        }else{
-            self.pageNumLabel.hidden = NO;
-            
-        }
+        self.pageNumLabel.hidden = imageArray.count==1 ?YES:NO;
+   
         self.dataArray = imageArray;
         [self.colView reloadData];
-        
+    
         [self.colView setContentOffset:CGPointMake((kPictureBrowserScreenWidth+20)*currentNum, 0)];
-        self.pageNumLabel.text = [NSString stringWithFormat:@"%d/%lu",currentNum+1,(unsigned long)imageArray.count];
-        
-        self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+        self.pageNumLabel.text = [NSString stringWithFormat:@"%ld/%lu",currentNum+1,(unsigned long)imageArray.count];
     }
     return self;
-    
 }
 #pragma mark UICollectionViewDelegate
 - (NSInteger) numberOfSectionsInCollectionView:(UICollectionView *)collectionView
@@ -76,15 +75,15 @@ NSString *const kCTImagePreviewViewControllerIdentifier = @"kCTImagePreviewViewC
 }
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    UICollectionViewCell *mycell = [collectionView dequeueReusableCellWithReuseIdentifier:kCTImagePreviewViewControllerIdentifier forIndexPath:indexPath];
+    UICollectionViewCell *mycell = [collectionView dequeueReusableCellWithReuseIdentifier:kCTPictureBrowserIdentifier forIndexPath:indexPath];
     
     [mycell.contentView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     
     CTImageScrollView *scrView = [CTImageScrollView initWithFrame:CGRectMake(0, 0, kPictureBrowserScreenWidth, kPictureBrowserScreenHeight)
-                                  image:self.dataArray[indexPath.row]];
+                                                            image:self.dataArray[indexPath.row]];
     scrView.scrollDelegate = self;
     [mycell.contentView addSubview:scrView];
-
+    
     return mycell;
 }
 
@@ -93,15 +92,6 @@ NSString *const kCTImagePreviewViewControllerIdentifier = @"kCTImagePreviewViewC
     
     int pageNum = (scrollView.contentOffset.x - (kPictureBrowserScreenWidth+20) / 2) / (kPictureBrowserScreenWidth+20) + 1;
     self.pageNumLabel.text = [NSString stringWithFormat:@"%d/%lu",pageNum+1,(long)self.dataArray.count];
-  
-}
-
-#pragma mark CTImageScrollViewDelegate
-- (void)singalTapAction {
-    UIWindow *window = [UIApplication sharedApplication].keyWindow;
-    window.windowLevel = UIWindowLevelNormal;
-    [self dismissViewControllerAnimated:YES completion:^{
-    }];
     
 }
 + (BOOL)clearLocalImages{
@@ -110,28 +100,19 @@ NSString *const kCTImagePreviewViewControllerIdentifier = @"kCTImagePreviewViewC
     if([[NSFileManager defaultManager] fileExistsAtPath:CTImagePath.documentPath ]){
         NSError *error;
         return [[NSFileManager defaultManager] removeItemAtPath:imgsLocalPath error:&error];
-      
+        
     }
-
+    
     return YES;
 }
-//获取最顶部控制器
-+ (UIViewController *)p_currentViewController {
-    
-    UIViewController* vc = [UIApplication sharedApplication].keyWindow.rootViewController;
-    while (1)
-    {
-        if ([vc isKindOfClass:[UITabBarController class]]) {
-            vc = ((UITabBarController *)vc).selectedViewController;
-        }else if ([vc isKindOfClass:[UINavigationController class]]) {
-            vc = ((UINavigationController *)vc).visibleViewController;
-        }else if (vc.presentedViewController) {
-            vc = vc.presentedViewController;
-        }else{
-            break;
-        }
-    }
-    return vc;
+- (void)singalTapAction{
+    UIWindow *window = [UIApplication sharedApplication].keyWindow;
+    window.windowLevel = UIWindowLevelNormal;
+    [UIView animateWithDuration:0.25 animations:^{
+        self.alpha = 0.0;
+    } completion:^(BOOL finished) {
+        [self removeFromSuperview];
+    }];
 }
 - (UICollectionView *)colView{
     if (!_colView) {
@@ -147,11 +128,11 @@ NSString *const kCTImagePreviewViewControllerIdentifier = @"kCTImagePreviewViewC
         colView.directionalLockEnabled  = YES;
         colView.alwaysBounceHorizontal = YES;
         _colView = colView;
+
+        [_colView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:kCTPictureBrowserIdentifier];
         
-        [_colView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:kCTImagePreviewViewControllerIdentifier];
-        
-        [self.view addSubview:_colView];
-        
+        [self addSubview:_colView];
+
     }
     return _colView;
 }
@@ -167,7 +148,7 @@ NSString *const kCTImagePreviewViewControllerIdentifier = @"kCTImagePreviewViewC
         pageLabel.layer.cornerRadius = 5.0;
         _pageNumLabel = pageLabel;
         [self.colView addSubview:pageLabel];
-        
+
     }
     
     return _pageNumLabel;

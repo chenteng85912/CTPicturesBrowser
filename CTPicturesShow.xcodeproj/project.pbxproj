@@ -10,6 +10,8 @@
 		3E1043452081839900395FD7 /* ct_refresh@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E1043442081839900395FD7 /* ct_refresh@2x.png */; };
 		3E10435D20820BC500395FD7 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 3E10435C20820BC500395FD7 /* README.md */; };
 		3E58B2D620A53DE400FD761B /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3E58B2D520A53DE400FD761B /* LaunchScreen.xib */; };
+		3E58B2E020A593C700FD761B /* CTPictureBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E58B2DF20A593C700FD761B /* CTPictureBrowser.m */; };
+		3E58B2E320A59A2900FD761B /* CTImagePreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E58B2E220A59A2900FD761B /* CTImagePreviewViewController.m */; };
 		3ECE9115207B884A0027CBC2 /* CTImageScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ECE910D207B884A0027CBC2 /* CTImageScrollView.m */; };
 		3ECE9116207B884A0027CBC2 /* CTDownloadWithSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ECE910F207B884A0027CBC2 /* CTDownloadWithSession.m */; };
 		3ECE9117207B884A0027CBC2 /* CTImagePath.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ECE9111207B884A0027CBC2 /* CTImagePath.m */; };
@@ -20,7 +22,6 @@
 		A4A95DEA1DD8492000AC3B34 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A4A95DE81DD8492000AC3B34 /* Main.storyboard */; };
 		A4A95DED1DD8492000AC3B34 /* CTPicturesShow.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A4A95DEB1DD8492000AC3B34 /* CTPicturesShow.xcdatamodeld */; };
 		A4A95DEF1DD8492000AC3B34 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A4A95DEE1DD8492000AC3B34 /* Assets.xcassets */; };
-		A4A95E0F1DD8496B00AC3B34 /* CTImagePreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A4A95E0A1DD8496B00AC3B34 /* CTImagePreviewViewController.m */; };
 		A4A95E101DD8496B00AC3B34 /* CTLazyImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = A4A95E0C1DD8496B00AC3B34 /* CTLazyImageView.m */; };
 /* End PBXBuildFile section */
 
@@ -28,6 +29,10 @@
 		3E1043442081839900395FD7 /* ct_refresh@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ct_refresh@2x.png"; sourceTree = "<group>"; };
 		3E10435C20820BC500395FD7 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3E58B2D520A53DE400FD761B /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
+		3E58B2DE20A593C700FD761B /* CTPictureBrowser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CTPictureBrowser.h; sourceTree = "<group>"; };
+		3E58B2DF20A593C700FD761B /* CTPictureBrowser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CTPictureBrowser.m; sourceTree = "<group>"; };
+		3E58B2E120A59A2900FD761B /* CTImagePreviewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CTImagePreviewViewController.h; sourceTree = "<group>"; };
+		3E58B2E220A59A2900FD761B /* CTImagePreviewViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CTImagePreviewViewController.m; sourceTree = "<group>"; };
 		3ECE910D207B884A0027CBC2 /* CTImageScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CTImageScrollView.m; sourceTree = "<group>"; };
 		3ECE910E207B884A0027CBC2 /* CTDownloadWithSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CTDownloadWithSession.h; sourceTree = "<group>"; };
 		3ECE910F207B884A0027CBC2 /* CTDownloadWithSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CTDownloadWithSession.m; sourceTree = "<group>"; };
@@ -46,8 +51,6 @@
 		A4A95DEC1DD8492000AC3B34 /* CTPicturesShow.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CTPicturesShow.xcdatamodel; sourceTree = "<group>"; };
 		A4A95DEE1DD8492000AC3B34 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A4A95DF31DD8492000AC3B34 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A4A95E091DD8496B00AC3B34 /* CTImagePreviewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CTImagePreviewViewController.h; sourceTree = "<group>"; };
-		A4A95E0A1DD8496B00AC3B34 /* CTImagePreviewViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CTImagePreviewViewController.m; sourceTree = "<group>"; };
 		A4A95E0B1DD8496B00AC3B34 /* CTLazyImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CTLazyImageView.h; sourceTree = "<group>"; };
 		A4A95E0C1DD8496B00AC3B34 /* CTLazyImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CTLazyImageView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -114,14 +117,16 @@
 				3ECE910F207B884A0027CBC2 /* CTDownloadWithSession.m */,
 				3ECE9110207B884A0027CBC2 /* CTImagePath.h */,
 				3ECE9111207B884A0027CBC2 /* CTImagePath.m */,
+				3E58B2E120A59A2900FD761B /* CTImagePreviewViewController.h */,
+				3E58B2E220A59A2900FD761B /* CTImagePreviewViewController.m */,
 				3ECE9114207B884A0027CBC2 /* CTImageScrollView.h */,
 				3ECE910D207B884A0027CBC2 /* CTImageScrollView.m */,
-				3ECE9113207B884A0027CBC2 /* CTSemaphoreGCD.h */,
-				3ECE9112207B884A0027CBC2 /* CTSemaphoreGCD.m */,
-				A4A95E091DD8496B00AC3B34 /* CTImagePreviewViewController.h */,
-				A4A95E0A1DD8496B00AC3B34 /* CTImagePreviewViewController.m */,
 				A4A95E0B1DD8496B00AC3B34 /* CTLazyImageView.h */,
 				A4A95E0C1DD8496B00AC3B34 /* CTLazyImageView.m */,
+				3E58B2DE20A593C700FD761B /* CTPictureBrowser.h */,
+				3E58B2DF20A593C700FD761B /* CTPictureBrowser.m */,
+				3ECE9113207B884A0027CBC2 /* CTSemaphoreGCD.h */,
+				3ECE9112207B884A0027CBC2 /* CTSemaphoreGCD.m */,
 			);
 			path = CTPicturesBrowser;
 			sourceTree = "<group>";
@@ -201,14 +206,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				3ECE9115207B884A0027CBC2 /* CTImageScrollView.m in Sources */,
+				3E58B2E320A59A2900FD761B /* CTImagePreviewViewController.m in Sources */,
 				3ECE9116207B884A0027CBC2 /* CTDownloadWithSession.m in Sources */,
 				A4A95E101DD8496B00AC3B34 /* CTLazyImageView.m in Sources */,
 				A4A95DE71DD8492000AC3B34 /* ViewController.m in Sources */,
 				A4A95DE41DD8492000AC3B34 /* AppDelegate.m in Sources */,
 				A4A95DED1DD8492000AC3B34 /* CTPicturesShow.xcdatamodeld in Sources */,
 				3ECE9118207B884A0027CBC2 /* CTSemaphoreGCD.m in Sources */,
-				A4A95E0F1DD8496B00AC3B34 /* CTImagePreviewViewController.m in Sources */,
 				A4A95DE11DD8492000AC3B34 /* main.m in Sources */,
+				3E58B2E020A593C700FD761B /* CTPictureBrowser.m in Sources */,
 				3ECE9117207B884A0027CBC2 /* CTImagePath.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

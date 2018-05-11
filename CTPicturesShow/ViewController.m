@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "CTImagePreviewViewController.h"
+#import "CTPictureBrowser.h"
 
 @interface ViewController ()
 
@@ -21,7 +22,9 @@
 }
 - (IBAction)showPicAction:(id)sender {
     
-    [CTImagePreviewViewController showPictureWithUrlOrImages:@[@"http://up.enterdesk.com/edpic_source/1b/79/40/1b7940ec78c11a7e897bf702db3a77ac.jpg"] withCurrentPageNum:0];
+    [CTPictureBrowser showPictureWithUrlOrImages:@[@"http://up.enterdesk.com/edpic_source/1b/79/40/1b7940ec78c11a7e897bf702db3a77ac.jpg"] withCurrentPageNum:0];
+
+//    [CTImagePreviewViewController showPictureWithUrlOrImages:@[@"http://up.enterdesk.com/edpic_source/1b/79/40/1b7940ec78c11a7e897bf702db3a77ac.jpg"] withCurrentPageNum:0];
     
 }
 
